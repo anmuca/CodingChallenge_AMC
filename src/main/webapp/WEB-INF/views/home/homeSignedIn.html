@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="#{view.index.title}">Welcome!</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link href="../../../resources/css/bootstrap.min.css" rel="stylesheet" media="screen" th:href="@{/resources/css/bootstrap.min.css}"/>
+    <link href="../../../resources/css/core.css" rel="stylesheet" media="screen" th:href="@{/resources/css/core.css}" />
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script src="../../../resources/js/bootstrap.min.js" th:src="@{/resources/js/bootstrap.min.js}"></script>
+</head>
+<body>
+<div th:replace="fragments/header :: header">&nbsp;</div>
+<div class="container">
+    <!-- /* Handle the flash message */-->
+    <th:block th:if="${message != null}">
+        <!-- /* The message code is returned from the @Controller */ -->
+        <div th:replace="fragments/alert :: alert (type=${#strings.toLowerCase(message.type)}, message=#{${message.message}(${#authentication.name})})">&nbsp;</div>
+    </th:block>
+    <p>
+    <form class="form-narrow form-horizontal" method="post" th:action="@{/calculate}" th:object="${rateForm}">
+    <fieldset>
+        <legend>Please set date and currency code</legend>
+        <div class="form-group" th:classappend="${#fields.hasErrors('rateDate')}? 'has-error'">
+            <label for="rateDate" class="col-lg-2 control-label">Date (set empty for rates of today)</label>
+            <div class="col-lg-10">
+                <input type="date" class="form-control" id="rateDate" placeholder="Rate date" th:field="*{rateDate}" />
+                <span class="help-block" th:if="${#fields.hasErrors('rateDate')}" th:errors="*{rateDate}">Incorrect date</span>
+            </div>
+        </div>
+        <div class="form-group" th:classappend="${#fields.hasErrors('currency')}? 'has-error'">
+            <label for="currency" class="col-lg-2 control-label">Currency</label>
+            <div class="col-lg-10">
+                <select th:field="*{currency}" class="form-control" id="currency" placeholder="Currency">
+                    <option value="">-</option>
+                    <option th:each="currency:${currencies}" th:value="${currency}" th:text="${currency}"/>
+                </select>
+
+                <span class="help-block" th:if="${#fields.hasErrors('currency')}" th:errors="*{currency}">Incorrect currency</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-offset-2 col-lg-10">
+                <button type="submit" class="btn btn-default">Calculate</button>
+            </div>
+        </div>
+    </fieldset>
+    </form>
+    </p>
+    <div th:if="${lastSearch != null} " class="div-narrow">
+        <p>Last result</p>
+        <table class="table">
+            <tr>
+                <th>Date of search</th>
+                <th>Rate date</th>
+                <th>Currency</th>
+                <th>Rate</th>
+            </tr>
+            <tr>
+
+                <td th:text="${#dates.format(lastSearch.searchDate, 'dd/MMM/yyyy HH:mm')}"></td>
+                <td th:if="${lastSearch.rateDate != null}" th:text="${#dates.format(lastSearch.rateDate, 'dd/MMM/yyyy')}"></td>
+                <td th:if="${lastSearch.rateDate == null}" >CURRENT</td>
+                <td th:text="${lastSearch.currency}"></td>
+                <td th:text="${lastSearch.rateValue}"></td>
+            </tr>
+        </table>
+    </div>
+
+    <div th:if="${not #lists.isEmpty(latestSearches)} " class="div-narrow">
+        <p>Latest results</p>
+        <table class="table">
+            <tr>
+                <th>Date of search</th>
+                <th>Rate date</th>
+                <th>Currency</th>
+                <th>Rate</th>
+            </tr>
+            <tr th:each="search:${latestSearches}">
+                <td th:text="${#dates.format(search.searchDate, 'dd/MMM/yyyy HH:mm')}"></td>
+                <td th:if="${search.rateDate != null}" th:text="${#dates.format(search.rateDate, 'dd/MMM/yyyy')}"></td>
+                <td th:if="${search.rateDate == null}" >CURRENT</td>
+                <td th:text="${search.currency}"></td>
+                <td th:text="${search.rateValue}"></td>
+            </tr>
+        </table>
+    </div>
+
+
+</div>
+</body>
+</html>
