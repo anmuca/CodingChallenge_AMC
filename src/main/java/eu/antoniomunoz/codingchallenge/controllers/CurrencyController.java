@@ -1,6 +1,8 @@
 package eu.antoniomunoz.codingchallenge.controllers;
 
 import eu.antoniomunoz.codingchallenge.controllers.forms.RateForm;
+import eu.antoniomunoz.codingchallenge.exceptions.CurrencyServiceException;
+import eu.antoniomunoz.codingchallenge.exceptions.RatesWSNotAvailable;
 import eu.antoniomunoz.codingchallenge.model.CurrencySearch;
 import eu.antoniomunoz.codingchallenge.services.CurrencySearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Controller
 @Secured({"ROLE_USER"})
@@ -23,6 +27,8 @@ public class CurrencyController {
 
     private static final String VIEW_NAME = "home/homeSignedIn";
     private static final String INVALID_CURRENCY_MESSAGE = "notBlank.message";
+
+    private static final Logger LOGGER = Logger.getLogger("global");
 
 
     @Value("#{'${app.currenciesShown}'.split(',')}")
@@ -56,9 +62,14 @@ public class CurrencyController {
             }
         }
         if (!errors.hasErrors()) {
-            CurrencySearch result = currencySearchService.findAndSaveSearch(rateForm.getRateDate(), rateForm.getCurrency());
-            if(result != null){
-                model.addAttribute("lastSearch", result);
+            try {
+                CurrencySearch result = currencySearchService.findAndSaveSearch(rateForm.getRateDate(), rateForm.getCurrency());
+                if (result != null) {
+                    model.addAttribute("lastSearch", result);
+                }
+            }catch(CurrencyServiceException | RatesWSNotAvailable e){
+                LOGGER.log(Level.WARNING, "Error from the webservice of rates", e);
+                errors.reject("webservice.message");
             }
         }
         commonViewObjects(model);

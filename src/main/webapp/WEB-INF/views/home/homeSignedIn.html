@@ -44,8 +44,12 @@
             </div>
         </div>
     </fieldset>
+    <div th:if="${#fields.hasGlobalErrors()}" class="has-error">
+        <span class="help-block" th:each="err : ${#fields.globalErrors()}" th:text="${err}" >Input is incorrect</span>
+    </div>
     </form>
     </p>
+
     <div th:if="${lastSearch != null} " class="div-narrow">
         <p>Last result</p>
         <table class="table">
