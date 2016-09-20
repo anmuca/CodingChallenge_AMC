@@ -33,7 +33,7 @@
         <div class="form-group" th:classappend="${#fields.hasErrors('birthDate')}? 'has-error'">
             <label for="birthDate" class="col-lg-2 control-label">Date of birth</label>
             <div class="col-lg-10">
-                <input type="date" class="form-control" id="birthDate" placeholder="Date of birth" th:field="*{birthDate}" />
+                <input type="text" class="form-control" id="birthDate" placeholder="Date of birth" th:field="*{birthDate}" />
                 <span class="help-block" th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}">Incorrect date</span>
             </div>
         </div>
@@ -54,7 +54,7 @@
         <div class="form-group" th:classappend="${#fields.hasErrors('city')}? 'has-error'">
             <label for="city" class="col-lg-2 control-label">City</label>
             <div class="col-lg-10">
-                <input type="date" class="form-control" id="city" placeholder="City" th:field="*{city}" />
+                <input type="text" class="form-control" id="city" placeholder="City" th:field="*{city}" />
                 <span class="help-block" th:if="${#fields.hasErrors('city')}" th:errors="*{city}">Incorrect city</span>
             </div>
         </div>

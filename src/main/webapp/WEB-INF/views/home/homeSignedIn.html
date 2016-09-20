@@ -23,7 +23,7 @@
         <div class="form-group" th:classappend="${#fields.hasErrors('rateDate')}? 'has-error'">
             <label for="rateDate" class="col-lg-2 control-label">Date (set empty for rates of today)</label>
             <div class="col-lg-10">
-                <input type="date" class="form-control" id="rateDate" placeholder="Rate date" th:field="*{rateDate}" />
+                <input type="text" class="form-control" id="rateDate" placeholder="Rate date" th:field="*{rateDate}" />
                 <span class="help-block" th:if="${#fields.hasErrors('rateDate')}" th:errors="*{rateDate}">Incorrect date</span>
             </div>
         </div>
@@ -44,8 +44,12 @@
             </div>
         </div>
     </fieldset>
+    <div th:if="${#fields.hasGlobalErrors()}" class="has-error">
+        <span class="help-block" th:each="err : ${#fields.globalErrors()}" th:text="${err}" >Input is incorrect</span>
+    </div>
     </form>
     </p>
+
     <div th:if="${lastSearch != null} " class="div-narrow">
         <p>Last result</p>
         <table class="table">
